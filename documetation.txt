@@ -1,0 +1,45 @@
+Opisz użytkownikowi wymagane parametry obrazu.
+Wczytaj obraz.
+	Sprawdź, czy ma właściwe parametry. (2:1, rozmiary są potęgą liczby 2)
+Poproś o dane planety:
+	Wielkość
+	Szybkość obrotu
+	Zakrzywienie osi
+	Wzorzec insolacji (może wystarczy "monthly basis"?, a może trzeba napisać skrypt?)
+	Parametry albedo i pochłaniania dla różnych rodzajów powierzchni
+	Spadek temperatury i ciśnienia wraz z wysokością
+	Wpływ prądów morskich na generowanie chmur
+	Długość dnia, długość roku
+	Poziom symulacji (dla każdego piksela
+Uruchom symulację klimatu
+	Do ustalenia, czy to będzie statyczne obliczenie danych, czy dynamiczne?
+	Wizualizacja
+Możliwość przełączania się między mapami:
+	Strefy klimatyczne
+	Biomy
+	Ciśnienie Styczeń-Lipiec (a może po miesiącu?)
+	Temperatury jw.
+	Wiatry jw. + wiatry "stałe" i zmienne
+	Prądy morskie jw. + prądy morskie "stałe" i zmienne
+Wybór:
+	Eksport map i danych
+	Zmiana parametrów i powtórzenie symulacji
+	
+	
+
+---
+
+PODSTAWOWA SYMULACJA:
+
+- temperatury na podstawie szerokości geograficznej/insolacji
+- dopasowanie temperatur wg wody, lądu, wysokości
+- strefy ciśnień na podstawie komórek Hadleya i nagrzewania/wychładzania się lądu (i do pewnego stopnia wody)
+- na tej podstawie dominujące wiatry (i wyrównywanie ciśnień - czyli system gdzie ciśnienie jest podwyższane/obniżane przez temperaturę i komórki Hadleya, a wyrównywane przez wiatr
+- na podstawie wiatrów - powierzchniowe prądy morskie (włączając w to temperaturę wody - przenoszoną i wyrównywaną)
+- generacja chmur na wodzie, przy uwzględnieniu wpływu prądów
+- przenoszenie chmur za pomocą wiatru i generowanie opadów (wpływ lądu i wysokości)
+	- transfer chmur i opady zawsze rozliczone w całości w ciągu jednej klatki - lub być może coś może "zostać" i dodać się do podstawy w następny dzień
+	- trzeba tu brać pod uwagę "potencjalną ewapotranspirację", czyli w pływ temperatury na wilgoć
+	- wpływ chmur i deszczu na temperaturę
+- (ew. wygenerowany z opadów śnieg i jego wpływ na albedo)
+- powtórzenie cyklu
