@@ -242,7 +242,9 @@ function Calc.addCloudGreenhouse(irradiance, clouds)
 end
 
 function Calc.newTemp(currenttemp, addedtemp, heatcapacity)
-	return (currenttemp * heatcapacity + addedtemp)/(heatcapacity + 1)
+	local current = Calc.tempToIrradiation(currenttemp)
+	local added = Calc.tempToIrradiation(addedtemp)
+	return Calc.irradiationToTemp((current * heatcapacity + added)/(heatcapacity + 1))
 end
 
 function Calc.toCelsius(temp)

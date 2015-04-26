@@ -61,8 +61,10 @@ function Quadrant:addInsolation(insolation)
 end
 
 function Quadrant:equalizeTemp()
-	local airI = Calc.tempToIrradiation(self.airTemp)
-	local groundI = Calc.tempToIrradiation(self.groundTemp)
+	local air = self.airTemp
+	local ground = self.groundTemp
+	self.airTemp = Calc.newTemp(air, ground, Calc.HeatCapacity["air"])
+	self.groundTemp = Calc.newTemp(ground, air, Calc.HeatCapacity[self.terrain])
 	
 end
 
