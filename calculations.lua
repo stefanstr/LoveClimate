@@ -111,7 +111,7 @@ Calc.albedoTable = {
 Calc.baseGreenhouse = 0.25 --this is w/o water vapor
 --for water vapor, I will need to write a function based on humidity
 --for now, this will do
-Calc.cloudGreenhouse = 2 * stdGreenhouse - Calc.baseGreenhouse
+Calc.cloudGreenhouse = 0.5
 
 
 function Calc.getDeclinationFunction(tilt, daysinyear, daysfromwintersolstice, eccentricity, daysfromperihelion)

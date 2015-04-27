@@ -20,7 +20,8 @@ local Quadrant = {}
 Quadrant.__index = Quadrant
 
 --Temperatures are in Kelvin
-function Quadrant.new(x, y, latitude, altitude, temperature, pressure, terrain)
+function Quadrant.new(x, y, latitude, altitude, temperature, pressure, type, terrain)
+--type can be "water" or "land"
 	local q = {}
 	check(x)
 	q.x = x
@@ -36,8 +37,8 @@ function Quadrant.new(x, y, latitude, altitude, temperature, pressure, terrain)
 	q.airHumidity = 0
 	check(latitude)
 	q.latitude = latitude
+	q.type = type
 	q.terrain = terrain
-	q.vegetation = "none"
 	q.clouds = 0 -- percentage: 0-1
 	return setmetatable(q, Quadrant)
 end
@@ -49,22 +50,22 @@ end
 --The amount of insolation needs to be calculated outside of this function.
 
 function Quadrant:addInsolation(insolation)
-	--Atmospheric albedo
-	local insolation = insolation * (1 - Calc.albedoTable.atmosphericAlbedo)
 	--Cloud cover
-	local insolation = Calc.addCloudGreenhouse(insolation, self.clouds)
-	--Heat up air
-	self.airTemp = Calc.newTemp(self.airTemp, Calc.irradiationToTemp(insolation*Calc.albedoTable.atmosphericAbsorption), Calc.HeatCapacity["air"])
-	local insolation = insolation * (1 - Calc.albedoTable.atmosphericAbsorption)
+	local albedo = Calc.albedoTable[self.terrain] + Calc.albedoTable.atmosphericAlbedo + self.clouds * Calc.albedoTable.atmosphericAbsorption
+	local greenhouse = Calc.baseGreenhouse + self.clouds * Calc.cloudGreenhouse
+	local newTemp = Calc.irradiationToAtmosphericTemp(insolation, greenhouse,albedo)
+	--Heat up air: I am not interested in the whole atmosphere, only with the ground-level.
+	--Because of that, I am using the same insolation as for the ground.
+	self.airTemp = Calc.newTemp(self.airTemp, newTemp , Calc.HeatCapacity["air"])
 	--Heat up the ground
-	self.groundTemp = Calc.newTemp(self.groundTemp, Calc.irradiationToTemp(insolation), Calc.HeatCapacity[self.terrain])
+	self.groundTemp = Calc.newTemp(self.groundTemp, newTemp, Calc.HeatCapacity[self.type])
 end
 
 function Quadrant:equalizeTemp()
 	local air = self.airTemp
 	local ground = self.groundTemp
 	self.airTemp = Calc.newTemp(air, ground, Calc.HeatCapacity["air"])
-	self.groundTemp = Calc.newTemp(ground, air, Calc.HeatCapacity[self.terrain])
+	self.groundTemp = Calc.newTemp(ground, air, Calc.HeatCapacity[self.type])
 	
 end
 
@@ -74,6 +75,11 @@ end
 function Quadrant:generateClouds(...)
 end
 
+--Wind is fast - I think I need to make a function that moves the air and moisture along
+--the wind until it "runs out". One pixel can be as little as 50 km...
+--How can I do this without overcomplicating things?
+--Multiple passes over the map?
+--Moving airmass along the winds after having defined the winds in the previous step?
 function Quadrant:defineWind(...)
 end
 
