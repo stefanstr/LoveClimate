@@ -63,7 +63,7 @@ end
 --http://en.wikipedia.org/wiki/Position_of_the_Sun
 
 local function solarDeclination(tilt, daysinyear, daysfromwintersolstice, eccentricity, daysfromperihelion)
-	return asin(sin(-rad(tilt))*cos(rad(360/daysinyear * daysfromwintersolstice + 360/pi * eccentricity * sin(rad(360/daysinyear * daysfromperihelion)))))
+	return -asin(sin(-rad(tilt))*cos(rad(360/daysinyear * daysfromwintersolstice + 360/pi * eccentricity * sin(rad(360/daysinyear * daysfromperihelion)))))
 end
 
 local function cosHourAngleOfSunrise(day, latitude, declinationfunction)
@@ -113,6 +113,10 @@ Calc.baseGreenhouse = 0.25 --this is w/o water vapor
 --for now, this will do
 Calc.cloudGreenhouse = 0.5
 
+--The below is taken from http://answers.google.com/answers/threadview/id/512638.html
+--I might convert it into a function one day, but for now it is enough for my needs.
+Calc.dailyOceanEvaporation = 32.877 -- mm/day = 12000 mm/year
+
 
 function Calc.getDeclinationFunction(tilt, daysinyear, daysfromwintersolstice, eccentricity, daysfromperihelion)
 -- daysfromwintersolstice and daysfromperihelion should be for the first day of the year here
@@ -129,10 +133,10 @@ end
 
 function Calc.dayPercentage(day, latitude, declinationfunction)
 	local cosh0 = cosHourAngleOfSunrise(day, latitude, declinationfunction)
-	if -cosh0 > 1 then
-		return 1
-	elseif -cosh0 < -1 then
+	if cosh0 < -1 then
 		return 0
+	elseif cosh0 > 1 then
+		return 1
 	else 
 		return 1 - acos(cosh0)/pi
 	end
@@ -160,16 +164,23 @@ end
 function Calc.getBaseDailyInsolation(day, latitude, meandistancetosun, declinationfunction, orbitfunction, solarconstant)
 	local actualdistancetosun = (orbitfunction and orbitfunction(day)) or 1
 	local cosh0 = cosHourAngleOfSunrise(day, latitude, declinationfunction)
+	print("DEBUG: ", cosh0)
 	local h0
-	if cosh0 > 1 then
+	if cosh0 < -1 then
 		return 0
-	elseif cosh0 < -1 then
+	elseif cosh0 > 1 then
 		h0 = pi
-	else h0 = acos(cosh0)
+	else
+		h0 = acos(cosh0)
 	end
 	local declination = declinationfunction(day)
 	local solarconstant = (solarconstant or SC) / pi
-	return solarconstant*meandistancetosun^2/actualdistancetosun^2*(h0*sin(rad(latitude))*sin(declination)+cos(rad(latitude))*cos(declination)*sin(h0))
+	local ins = solarconstant*meandistancetosun^2/actualdistancetosun^2*(h0*sin(rad(latitude))*sin(declination)+cos(rad(latitude))*cos(declination)*sin(h0))
+	if ins < 0 then
+		return 0
+	else
+		return ins
+	end
 end
 
 function Calc.addGreenhouse(temperature, greenhouse, albedo)

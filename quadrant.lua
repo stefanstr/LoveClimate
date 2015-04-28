@@ -35,9 +35,15 @@ function Quadrant.new(x, y, latitude, altitude, temperature, pressure, type, ter
 	check(pressure)
 	q.airPressure = pressure
 	q.airHumidity = 0
+	q.airWater = 0
 	check(latitude)
 	q.latitude = latitude
 	q.type = type
+	if type == "water" then 
+		q.groundWater = "water"
+	else
+		q.groundWater = 0
+	end
 	q.terrain = terrain
 	q.clouds = 0 -- percentage: 0-1
 	return setmetatable(q, Quadrant)
@@ -59,14 +65,21 @@ function Quadrant:addInsolation(insolation)
 	self.airTemp = Calc.newTemp(self.airTemp, newTemp , Calc.HeatCapacity["air"])
 	--Heat up the ground
 	self.groundTemp = Calc.newTemp(self.groundTemp, newTemp, Calc.HeatCapacity[self.type])
+	--Evaporate water from ground
+	--Main 
+	if self.type == "water" then
+		self.airWater = self.airWater + Calc.dailyOceanEvaporation
+	else
+		local change = 
+	end
 end
 
-function Quadrant:equalizeTemp()
+--The below function radiates excess heat and moisture from the ground
+function Quadrant:groundRadiation()
 	local air = self.airTemp
 	local ground = self.groundTemp
 	self.airTemp = Calc.newTemp(air, ground, Calc.HeatCapacity["air"])
-	self.groundTemp = Calc.newTemp(ground, air, Calc.HeatCapacity[self.type])
-	
+	self.groundTemp = Calc.newTemp(ground, air, Calc.HeatCapacity[self.type])	
 end
 
 function Quadrant:updateAir(...)
