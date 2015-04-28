@@ -50,3 +50,15 @@ Proposal:
 3c***rainfall (or not)->change humidity and temperature
 
 **elevation: important for pressure, temperature and rainfall
+**move current/air only one pixel a day - should even itself out after a few years?
+**alternatively move them all along the vectors - then the saturation stuff needs to be checked every step
+**alternatively do a fixed, configurable number of passes over the map: first the water, than the air or only air
+
+Quadrant:heatUp(IncomingIrradiation(day, latitude, orbitalstuff, albedo, greenhouse))
+Quadrant:basePressure(CalculatePressureSystem(day, latitude, rotationspeed, ...)
+Quadrant:recalculateWindVector()
+Quadrant:recalculateOceanVector()
+Quadrant:moveWaterMass(map)
+Quadrant:evaporate()
+Quadrant:moveAirMass(map)
+Quadrant:manageClouds()
