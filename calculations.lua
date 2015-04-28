@@ -121,7 +121,7 @@ Calc.dailyOceanEvaporation = 32.877 -- mm/day = 12000 mm/year
 function Calc.getDeclinationFunction(tilt, daysinyear, daysfromwintersolstice, eccentricity, daysfromperihelion)
 -- daysfromwintersolstice and daysfromperihelion should be for the first day of the year here
 -- defaults for Earth:
-	local tilt = tilt or 23.44
+	local tilt = tilt or 23.44 -- in degrees - is convert to radians through the private function
 	local daysinyear = daysinyear or 365.24
 	local daysfromwintersolstice = daysfromwintersolstice or 10
 	local eccentricity = eccentricity or 0.0167
@@ -143,7 +143,7 @@ function Calc.dayPercentage(day, latitude, declinationfunction)
 end
 
 function Calc.dayLength(day, latitude, declinationfunction, nychthemeron)
-	nychthemeron = nychthemeron or 24
+	local nychthemeron = nychthemeron or 24
 	return nychthemeron * Calc.dayPercentage(day, latitude, declinationfunction)
 end
 
@@ -162,14 +162,13 @@ end
 --see also: http://www.conversion-website.com/energy/from-Celsius-heat-unit-IT.html
 
 function Calc.getBaseDailyInsolation(day, latitude, meandistancetosun, declinationfunction, orbitfunction, solarconstant)
-	local actualdistancetosun = (orbitfunction and orbitfunction(day)) or 1
-	local cosh0 = cosHourAngleOfSunrise(day, latitude, declinationfunction)
-	print("DEBUG: ", cosh0)
+	local actualdistancetosun = (orbitfunction and orbitfunction(day)) or 1 -- in AU
+	local cosh0 = cosHourAngleOfSunrise(day, latitude, declinationfunction) 
 	local h0
 	if cosh0 < -1 then
 		return 0
 	elseif cosh0 > 1 then
-		h0 = pi
+		h0 = 1
 	else
 		h0 = acos(cosh0)
 	end
