@@ -1,0 +1,52 @@
+Manual process:
+-ocean currents
+-hadley/polar cells (pressure systems)
+-seasonal pressure systems
+-dominant winds
+-rain patterns:
+	- baseline rain
+	- ITCZ, extreme
+	- ITCZ, moderate
+	- onshore winds
+	- mountain rains
+	- warm coastal currents
+	- polar front
+-temperature influencing features:
+	- Maritime influence / July and January
+	- Continental influence
+	- Cold ocean currents / July and January
+	- Warm ocean currents / July and January
+	- High humidity / July and January
+	- Medium elevation
+	- High elevation
+	- Very high elevation
+-add base temperature and adjust
+-work out climate zones
+
+Issues/what to improve:
+-I want to be able to simulate on a month-by-month, and maybe day-by-day, basis
+-I want to be able to work with various orbit and star types
+-I want to be able to work on a pixel level
+-I want to have greater granularity
+-I want to have the systems emerge: e.g., pressure patterns from "real" movement of air masses, ocean currents driven by winds...
+
+
+Proposal:
+
+1) work out base temperature and base pressure (convection cells)
+1a)basic irradiation + orbital position = base temperature -> incoming irradiation, orbit parameters, atmosphere absorption, albedo, greenhouse
+1b)rotation speed + season = convection cells -> Hadley/Polar systems, air pressure
+2) create base wind patterns -> wind vector (can ignore strenght? will even itself out?)
+3) move the winds:
+3a)create ocean currents along the winds -> ocean current vector, ocean temperature
+3a*create the whole "spirals" and close the loops -> remember Coriolis
+3a**adjust sea temperatures (move water along the currents)
+3b)create evaporation pattern -> evaporation equation, ground, sea, air humidity
+3b*use ground/sea temperature and wind speed to calculate evaporation -> use wind speed or not? or maybe only for this?
+3b**adjust air humidity + change temperature of ground and air in the process -> ground temperature, equation of air humidity vs pressure vs temperature
+3c)do precipitation.
+3c*distribute humidity along the wind
+3c**check for saturation -> saturation/rainfall equation, cloud cover parameter (for albedo in next round)
+3c***rainfall (or not)->change humidity and temperature
+
+**elevation: important for pressure, temperature and rainfall

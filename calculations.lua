@@ -182,6 +182,29 @@ function Calc.getBaseDailyInsolation(day, latitude, meandistancetosun, declinati
 	end
 end
 
+
+---????
+function Calc.getBaseDailyInsolation2(day, latitude, tilt, cpaoo, lop, solarconstant)
+-- + tilt + cpaoo (conventional polar angle of orbit) + lop (longitude of perihelion
+	local actualdistancetosun = (orbitfunction and orbitfunction(day)) or 1 -- in AU
+	local cosh0 = cosHourAngleOfSunrise(day, latitude, declinationfunction) 
+	local h0
+	if cosh0 < -1 then
+		return 0
+	elseif cosh0 > 1 then
+		h0 = 1
+	else
+		h0 = acos(cosh0)
+	end
+	local solarconstant = (solarconstant or SC) / pi
+	local ins = solarconstant*(1+math.exp(1)*cos*(cpaoo-lop))^2*(h0*sin(rad(latitude))*sin(deg(tilt))*sin(cpaoo-lop)+cos(rad(latitude))*(1-sin(cpaoo-lop)^2)*sin(h0))
+	if ins < 0 then
+		return 0
+	else
+		return ins
+	end
+end
+
 function Calc.addGreenhouse(temperature, greenhouse, albedo)
 	local greenhouse = greenhouse or stdGreenhouse
 	local albedo = albedo or stdAlbedo
